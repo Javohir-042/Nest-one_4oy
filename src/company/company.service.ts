@@ -40,7 +40,7 @@ export class CompanyService {
   }
 
   async findAll(): Promise<Company[]> {
-    return this.companyModel.findAll({ include: { all: true } })
+    return this.companyModel.findAll({ include: { all: true }, order: [['id', 'ASC']] })
   }
 
   async findOne(id: number): Promise<Company | null> {

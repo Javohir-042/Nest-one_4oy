@@ -35,7 +35,7 @@ export class MachineDriverService {
   }
 
   findAll(): Promise<MachineDriver[]> {
-    return this.machineDriverModel.findAll({ include: { all: true } })
+    return this.machineDriverModel.findAll({ include: { all: true }, order: [['id', 'ASC']] })
   }
 
   async findOne(id: number): Promise<MachineDriver | null> {

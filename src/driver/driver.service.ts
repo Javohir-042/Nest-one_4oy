@@ -31,7 +31,7 @@ export class DriverService {
   }
 
   findAll(): Promise<Driver[]> {
-    return this.drverModel.findAll({ include: { all: true } })
+    return this.drverModel.findAll({ include: { all: true }, order: [['id', 'ASC']] })
   }
 
   async findOne(id: number): Promise<Driver | null> {
@@ -44,7 +44,7 @@ export class DriverService {
   }
 
   async update(id: number, updateDriverDto: UpdateDriverDto) {
-    const { first_name, last_name, phone, driver_license } = updateDriverDto;
+    const { phone, driver_license } = updateDriverDto;
 
     const driverId = await this.drverModel.findByPk(id)
     if (!driverId) {

@@ -1,11 +1,11 @@
-import { IsDate, IsInt, IsNotEmpty, IsNumber, IsString, Min } from "class-validator";
+import { IsInt, IsNotEmpty, IsNumber, IsString, Min } from "class-validator";
 
 export class CreateBuilderDto {
     @IsString()
     @IsNotEmpty()
     full_name: string;
 
-    @IsDate()
+    @IsString()
     @IsNotEmpty()
     birth_day: Date;
 

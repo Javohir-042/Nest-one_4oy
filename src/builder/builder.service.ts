@@ -11,7 +11,7 @@ import { Company } from '../company/models/company.models';
 export class BuilderService {
   constructor(
     @InjectModel(Builder) private readonly builderModel: typeof Builder,
-    @InjectModel(Company) private readonly companyModel: typeof Builder,
+    @InjectModel(Company) private readonly companyModel: typeof Company,
 
     // private readonly companyService: CompanyService
   ) { }
@@ -22,7 +22,11 @@ export class BuilderService {
       throw new NotFoundException("Iltimos barchasini kiriting")
     }
 
-    // const company = await this.companyService.findOne(companyId);
+    const existsFullname = await this.builderModel.findOne({ where: { full_name } })
+    if (existsFullname) {
+      throw new BadRequestException("Bunday full_name mavjud")
+    }
+
 
     const company = await this.companyModel.findByPk(companyId);
     if (!company) {
@@ -33,7 +37,7 @@ export class BuilderService {
   }
 
   findAll(): Promise<Builder[]> {
-    return this.builderModel.findAll({ include: { all: true } });
+    return this.builderModel.findAll({ include: { all: true }, order: [['id', 'ASC']] });
   }
 
   async findOne(id: number): Promise<Builder | null> {
@@ -52,8 +56,24 @@ export class BuilderService {
       throw new BadRequestException("Builder not found")
     }
 
+    const { full_name, companyId } = updateBuilderDto;
+
+    if(full_name){
+      const existsFullname = await this.builderModel.findOne({ where: { full_name }});
+      if(existsFullname){
+        throw new BadRequestException("Bunday Fullname mavjud boshqa fullname kiriting")
+      }
+    }
+
+    const company_id = await this.companyModel.findByPk(companyId)
+    if(!company_id){
+      throw new NotFoundException(" Bunday company_id mavjud emas")
+    }
+
+
     const builder = await this.builderModel.update(updateBuilderDto, { where: { id }, returning: true })
     return builder[1][0]
+
   }
 
   async remove(id: number) {

@@ -27,7 +27,7 @@ export class MachineService {
   }
 
   findAll(): Promise<Machine[]> {
-    return this.machineModel.findAll({ include: { all: true } })
+    return this.machineModel.findAll({ include: { all: true }, order: [['id', 'ASC']] })
   }
 
   async findOne(id: number): Promise<Machine | null> {

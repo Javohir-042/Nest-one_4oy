@@ -10,6 +10,14 @@ interface IMachine_driverCreation{
 
 @Table({ tableName: 'machine_driver'})
 export class MachineDriver extends Model<MachineDriver, IMachine_driverCreation> {
+
+    @Column({
+        type: DataType.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+    })
+    declare id: number;
+
     @ForeignKey(() => Machine)
     @Column({
         type: DataType.INTEGER,
