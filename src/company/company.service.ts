@@ -40,11 +40,11 @@ export class CompanyService {
   }
 
   async findAll(): Promise<Company[]> {
-    return this.companyModel.findAll()
+    return this.companyModel.findAll({ include: { all: true } })
   }
 
   async findOne(id: number): Promise<Company | null> {
-    const companiya = await this.companyModel.findByPk(id);
+    const companiya = await this.companyModel.findByPk(id, { include: { all: true } });
     if (!companiya) {
       throw new NotFoundException("Companiy not found")
     }

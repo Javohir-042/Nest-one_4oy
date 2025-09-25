@@ -22,7 +22,7 @@ import { MachineDriver } from "./machine_driver/model/machine_driver.model";
       username: process.env.PG_USER,
       password: process.env.PG_PASSWORD,
       database: process.env.PG_DATABASE,
-      models: [Company, Builder, Machine, Driver, MachineDriver],
+      // models: [Company, Builder, Machine, Driver, MachineDriver],
       autoLoadModels: true,
       logging: false,
       // sync: { alter: true },

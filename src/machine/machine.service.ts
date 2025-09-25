@@ -3,18 +3,24 @@ import { CreateMachineDto } from './dto/create-machine.dto';
 import { UpdateMachineDto } from './dto/update-machine.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { Machine } from './model/machine.model';
+import { Company } from '../company/models/company.models';
 
 @Injectable()
 export class MachineService {
   constructor(
-    @InjectModel(Machine) private readonly machineModel: typeof Machine
+    @InjectModel(Machine) private readonly machineModel: typeof Machine,
+    @InjectModel(Company) private readonly companyModel: typeof Company,
   ) { }
-
 
   async create(createMachineDto: CreateMachineDto): Promise<Machine> {
     const { model, name, companyId } = createMachineDto;
     if (!model || !name || !companyId) {
       throw new NotFoundException("Iltimos barchasini kiriting")
+    }
+
+    const companyModel = await this.companyModel.findByPk(companyId)
+    if(!companyModel){
+      throw new NotFoundException("Bunday companiya mavjud emas")
     }
 
     return this.machineModel.create(createMachineDto);

@@ -8,22 +8,22 @@ import { Driver } from './models/driver.models';
 export class DriverService {
   constructor(
     @InjectModel(Driver) private readonly drverModel: typeof Driver
-  ){}
+  ) { }
 
   async create(createDriverDto: CreateDriverDto): Promise<Driver> {
     const { first_name, last_name, phone, driver_license } = createDriverDto;
 
-    if(!first_name || !last_name || !phone || !driver_license ){
+    if (!first_name || !last_name || !phone || !driver_license) {
       throw new NotFoundException("Iltimos barchasini kiriting")
     }
 
-    const existsPhone = await this.drverModel.findOne({ where: { phone }})
-    if(existsPhone){
+    const existsPhone = await this.drverModel.findOne({ where: { phone } })
+    if (existsPhone) {
       throw new BadRequestException("Bunday Telefor raqam bor ")
     }
 
-    const existsDriver_license = await this.drverModel.findOne({ where: { driver_license }})
-    if(existsDriver_license){
+    const existsDriver_license = await this.drverModel.findOne({ where: { driver_license } })
+    if (existsDriver_license) {
       throw new BadRequestException("Bunday Haydovchi litsenziya bor")
     }
 
@@ -31,12 +31,12 @@ export class DriverService {
   }
 
   findAll(): Promise<Driver[]> {
-    return this.drverModel.findAll()
+    return this.drverModel.findAll({ include: { all: true } })
   }
 
-  async findOne(id: number): Promise<Driver | null>  {
-    const driver = await this.drverModel.findByPk(id);
-    if(!driver){
+  async findOne(id: number): Promise<Driver | null> {
+    const driver = await this.drverModel.findByPk(id, { include: { all: true } });
+    if (!driver) {
       throw new NotFoundException("driver not found")
     }
 
@@ -44,23 +44,23 @@ export class DriverService {
   }
 
   async update(id: number, updateDriverDto: UpdateDriverDto) {
-    const {first_name, last_name, phone, driver_license} = updateDriverDto;
+    const { first_name, last_name, phone, driver_license } = updateDriverDto;
 
     const driverId = await this.drverModel.findByPk(id)
-    if(!driverId){
+    if (!driverId) {
       throw new NotFoundException("Driver not found")
     }
 
-    if(phone){
-      const existsPhone = await this.drverModel.findOne({ where: { phone }})
-      if(existsPhone && existsPhone.id !== id){
+    if (phone) {
+      const existsPhone = await this.drverModel.findOne({ where: { phone } })
+      if (existsPhone && existsPhone.id !== id) {
         throw new BadRequestException("Bunday Phone number mavjud")
       }
     }
 
-    if(driver_license){
-      const existsDriver_license = await this.drverModel.findOne({ where: { driver_license }})
-      if(existsDriver_license && existsDriver_license.id !== id){
+    if (driver_license) {
+      const existsDriver_license = await this.drverModel.findOne({ where: { driver_license } })
+      if (existsDriver_license && existsDriver_license.id !== id) {
         throw new BadRequestException("Bunday Driver_license mavjud")
       }
     }

@@ -3,11 +3,15 @@ import { CreateMachineDriverDto } from './dto/create-machine_driver.dto';
 import { UpdateMachineDriverDto } from './dto/update-machine_driver.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { MachineDriver } from './model/machine_driver.model';
+import { Machine } from '../machine/model/machine.model';
+import { Driver } from '../driver/models/driver.models';
 
 @Injectable()
 export class MachineDriverService {
   constructor(
-    @InjectModel(MachineDriver) private readonly machineDriverModel: typeof MachineDriver
+    @InjectModel(MachineDriver) private readonly machineDriverModel: typeof MachineDriver,
+    @InjectModel(Machine) private readonly machineModel: typeof Machine,
+    @InjectModel(Driver) private readonly driverModel: typeof Driver,
   ) { }
 
   async create(createMachineDriverDto: CreateMachineDriverDto): Promise<MachineDriver> {
@@ -15,6 +19,16 @@ export class MachineDriverService {
 
     if (!machineId || !driverId) {
       throw new NotFoundException("Barchasini kiriting")
+    }
+
+    const machineModel = await this.machineModel.findByPk(machineId)
+    if(!machineModel){
+      throw new NotFoundException("Bunday machine mavjud emas")
+    }
+
+    const driverModel = await this.driverModel.findByPk(driverId)
+    if(!driverModel){
+      throw new NotFoundException("bunday driver mavjud emas")
     }
 
     return this.machineDriverModel.create(createMachineDriverDto)
