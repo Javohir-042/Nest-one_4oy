@@ -1,67 +1,80 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateMachineDriverDto } from './dto/create-machine_driver.dto';
-import { UpdateMachineDriverDto } from './dto/update-machine_driver.dto';
-import { InjectModel } from '@nestjs/sequelize';
-import { MachineDriver } from './model/machine_driver.model';
-import { Machine } from '../machine/model/machine.model';
-import { Driver } from '../driver/models/driver.models';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { CreateMachineDriverDto } from "./dto/create-machine_driver.dto";
+import { UpdateMachineDriverDto } from "./dto/update-machine_driver.dto";
+import { InjectModel } from "@nestjs/sequelize";
+import { MachineDriver } from "./model/machine_driver.model";
+import { Machine } from "../machine/model/machine.model";
+import { Driver } from "../driver/models/driver.models";
 
 @Injectable()
 export class MachineDriverService {
   constructor(
-    @InjectModel(MachineDriver) private readonly machineDriverModel: typeof MachineDriver,
+    @InjectModel(MachineDriver)
+    private readonly machineDriverModel: typeof MachineDriver,
     @InjectModel(Machine) private readonly machineModel: typeof Machine,
     @InjectModel(Driver) private readonly driverModel: typeof Driver,
-  ) { }
+  ) {}
 
-  async create(createMachineDriverDto: CreateMachineDriverDto): Promise<MachineDriver> {
+  async create(
+    createMachineDriverDto: CreateMachineDriverDto,
+  ): Promise<MachineDriver> {
     const { machineId, driverId } = createMachineDriverDto;
 
     if (!machineId || !driverId) {
-      throw new NotFoundException("Barchasini kiriting")
+      throw new NotFoundException("Barchasini kiriting");
     }
 
-    const machineModel = await this.machineModel.findByPk(machineId)
-    if(!machineModel){
-      throw new NotFoundException("Bunday machine mavjud emas")
+    const machineModel = await this.machineModel.findByPk(machineId);
+    if (!machineModel) {
+      throw new NotFoundException("Bunday machine mavjud emas");
     }
 
-    const driverModel = await this.driverModel.findByPk(driverId)
-    if(!driverModel){
-      throw new NotFoundException("bunday driver mavjud emas")
+    const driverModel = await this.driverModel.findByPk(driverId);
+    if (!driverModel) {
+      throw new NotFoundException("bunday driver mavjud emas");
     }
 
-    return this.machineDriverModel.create(createMachineDriverDto)
+    return this.machineDriverModel.create(createMachineDriverDto);
   }
 
   findAll(): Promise<MachineDriver[]> {
-    return this.machineDriverModel.findAll({ include: { all: true }, order: [['id', 'ASC']] })
+    return this.machineDriverModel.findAll({
+      include: { all: true },
+      order: [["id", "ASC"]],
+    });
   }
 
   async findOne(id: number): Promise<MachineDriver | null> {
-    const machineDriver = await this.machineDriverModel.findByPk(id, { include: { all: true } })
+    const machineDriver = await this.machineDriverModel.findByPk(id, {
+      include: { all: true },
+    });
     if (!machineDriver) {
-      throw new NotFoundException("MachineDriver not found")
+      throw new NotFoundException("MachineDriver not found");
     }
 
     return machineDriver;
   }
 
   async update(id: number, updateMachineDriverDto: UpdateMachineDriverDto) {
-    const machineDriver = await this.machineDriverModel.findByPk(id)
+    const machineDriver = await this.machineDriverModel.findByPk(id);
     if (!machineDriver) {
-      throw new NotFoundException("MachineDriver not found")
+      throw new NotFoundException("MachineDriver not found");
     }
 
-    const machine_driver = await this.machineDriverModel.update(updateMachineDriverDto, { where: { id }, returning: true })
-    return machine_driver[1][0]
+    const machine_driver = await this.machineDriverModel.update(
+      updateMachineDriverDto,
+      { where: { id }, returning: true },
+    );
+    return machine_driver[1][0];
   }
 
   async remove(id: number) {
-    const machineDriver = await this.machineDriverModel.destroy({ where: { id } });
+    const machineDriver = await this.machineDriverModel.destroy({
+      where: { id },
+    });
     if (!machineDriver) {
-      return { message: "Bunday MachinaDriver mavjud emas"}
+      return { message: "Bunday MachinaDriver mavjud emas" };
     }
-    return { message: "MachinaDriver o'chirildi", id}
+    return { message: "MachinaDriver o'chirildi", id };
   }
 }

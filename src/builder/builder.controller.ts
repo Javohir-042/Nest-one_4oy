@@ -1,9 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { BuilderService } from './builder.service';
-import { CreateBuilderDto } from './dto/create-builder.dto';
-import { UpdateBuilderDto } from './dto/update-builder.dto';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from "@nestjs/common";
+import { BuilderService } from "./builder.service";
+import { CreateBuilderDto } from "./dto/create-builder.dto";
+import { UpdateBuilderDto } from "./dto/update-builder.dto";
 
-@Controller('builder')
+@Controller("builder")
 export class BuilderController {
   constructor(private readonly builderService: BuilderService) {}
 
@@ -17,18 +25,18 @@ export class BuilderController {
     return this.builderService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
+  @Get(":id")
+  findOne(@Param("id") id: string) {
     return this.builderService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBuilderDto: UpdateBuilderDto) {
+  @Patch(":id")
+  update(@Param("id") id: string, @Body() updateBuilderDto: UpdateBuilderDto) {
     return this.builderService.update(+id, updateBuilderDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
+  @Delete(":id")
+  remove(@Param("id") id: string) {
     return this.builderService.remove(+id);
   }
 }
