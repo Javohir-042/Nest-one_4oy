@@ -57,7 +57,7 @@ describe("Users controller test", () => {
         describe("when find all user is called", () => {
             let users: User[];
             beforeAll(async () => {
-               
+
                 users = await usersController.findAll();
             });
             it("then it should call usersService", () => {
@@ -68,5 +68,32 @@ describe("Users controller test", () => {
             })
         });
     });
+
+
+    describe("findOne", () => {
+        beforeEach(() => {
+            usersService.findOne = jest.fn().mockResolvedValue(userStub());
+        });
+
+        it("then it should return a user", async () => {
+            const result = await usersController.findOne(userStub().id.toString()); 
+            expect(usersService.findOne).toHaveBeenCalledWith(userStub().id); 
+            expect(result).toEqual(userStub());
+        });
+    });
+
+
+    describe("remove", () => {
+        beforeEach(() => {
+            usersService.remove = jest.fn().mockResolvedValue({ message: "User deleted successfully" });
+        });
+
+        it("then it should delete a user", async () => {
+            const result = await usersController.remove(userStub().id.toString());
+            expect(usersService.remove).toHaveBeenCalledWith(userStub().id);
+            expect(result).toEqual({ message: "User deleted successfully" });
+        });
+    });
+
 
 });

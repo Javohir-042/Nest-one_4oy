@@ -16,26 +16,26 @@ export class UsersService {
   ) { }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const { name, email, password } = createUserDto;
+    // const { email, password } = createUserDto;
 
-    if (!name || !email || !password) {
-      throw new NotFoundException('Iltimos barchasini kiriting')
-    }
+    // if ( !email || !password) {
+    //   throw new NotFoundException('Iltimos barchasini kiriting')
+    // }
 
-    const existsName = await this.userModel.findOne({ where: { name } })
-    if (existsName) {
-      throw new BadRequestException('Bunday name mavjud')
-    }
+    // const existsName = await this.userModel.findOne({ where: { name } })
+    // if (existsName) {
+    //   throw new BadRequestException('Bunday name mavjud')
+    // }
 
-    const existsEmail = await this.userModel.findOne({ where: { email } })
-    if (existsEmail) {
-      throw new BadRequestException('Bunday email mavjud')
-    }
+    // const existsEmail = await this.userModel.findOne({ where: { email } })
+    // if (existsEmail) {
+    //   throw new BadRequestException('Bunday email mavjud')
+    // }
 
-    const existsPassword = await this.userModel.findOne({ where: { password } })
-    if (existsPassword) {
-      throw new BadRequestException('Bunday password mavjud')
-    }
+    // const existsPassword = await this.userModel.findOne({ where: { password } })
+    // if (existsPassword) {
+    //   throw new BadRequestException('Bunday password mavjud')
+    // }
 
     const role = await this.roleService.findRoleByValue(createUserDto.value);
     if (!role) {
@@ -43,7 +43,7 @@ export class UsersService {
     }
 
     const newUser = await this.userModel.create(createUserDto);
-    await newUser.$set("roles", [role.id]);
+    // await newUser.$set("roles", [role.id]);
     // await newUser.save()
 
     return newUser;
@@ -66,8 +66,12 @@ export class UsersService {
       },
     });
 
-    return user?.dataValues;
+    return user
+      ? (typeof user.toJSON === "function" ? user.toJSON() : user)
+      : null;
+
   }
+
 
   findOne(id: number): Promise<User | null> {
     return this.userModel.findByPk(id, { include: { all: true } })
@@ -75,28 +79,28 @@ export class UsersService {
 
   async update(id: number, updateUserDto: UpdateUserDto) {
     const { name, email, password } = updateUserDto
-    if (!name || !email || !password) {
-      throw new NotFoundException('Iltimos barchasini kriting')
-    }
+    // if (!name || !email || !password) {
+    //   throw new NotFoundException('Iltimos barchasini kriting')
+    // }
 
-    const User = await this.userModel.findByPk(id)
-    if (!User) {
-      throw new NotFoundException('User not found')
-    }
+    // const User = await this.userModel.findByPk(id)
+    // if (!User) {
+    //   throw new NotFoundException('User not found')
+    // }
 
-    const existsName = await this.userModel.findOne({ where: { name } })
-    if (existsName && existsName.id !== +id) {
-      throw new BadRequestException('Bunday name mavjud')
-    }
+    // const existsName = await this.userModel.findOne({ where: { name } })
+    // if (existsName && existsName.id !== +id) {
+    //   throw new BadRequestException('Bunday name mavjud')
+    // }
 
-    if (email && email !== User.email) {
-      throw new BadRequestException(`Emailni o'zgartirish mumkun emas`)
-    }
+    // if (email && email !== User.email) {
+    //   throw new BadRequestException(`Emailni o'zgartirish mumkun emas`)
+    // }
 
-    const existsPassword = await this.userModel.findOne({ where: { password } })
-    if (existsPassword && existsPassword.id !== +id) {
-      throw new BadRequestException('Bunday password mavjud')
-    }
+    // const existsPassword = await this.userModel.findOne({ where: { password } })
+    // if (existsPassword && existsPassword.id !== +id) {
+    //   throw new BadRequestException('Bunday password mavjud')
+    // }
 
     const updateUser = await this.userModel.update(
       { name, password },
@@ -176,4 +180,3 @@ export class UsersService {
     return user;
   }
 }
-  
