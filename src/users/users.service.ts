@@ -5,6 +5,8 @@ import { InjectModel } from "@nestjs/sequelize";
 import { User } from "./model/user.model";
 import { RoleService } from "../role/role.service";
 import { Role } from "../role/model/role.model";
+import { AddRemoveDto } from "./dto/add-remove-role.dto";
+import { ActivateUserDto } from "./dto/activate-user.dto";
 
 @Injectable()
 export class UsersService {
@@ -105,10 +107,73 @@ export class UsersService {
   }
 
   async remove(id: number) {
-    const deleted = await this.userModel.destroy({where: {id}})
-    if(!deleted){
-      return {message: 'Bunday user mavjud emas'}
+    const deleted = await this.userModel.destroy({ where: { id } })
+    if (!deleted) {
+      return { message: 'Bunday user mavjud emas' }
     }
-    return {message: `user o'chirildi`}
+    return { message: `foydalanuchi o'chirildi` }
+  }
+
+
+  async addRole(addRemoveDto: AddRemoveDto) {
+    const { userId, value } = addRemoveDto;
+    const user = await this.userModel.findByPk(userId);
+    if (!user) {
+      throw new NotFoundException("Bunday foydalanuvchi mavjud emas")
+    }
+
+    const role = await this.roleService.findRoleByValue(value);
+    if (!role) {
+      throw new NotFoundException("Bunday role mavjud emas")
+    }
+
+    await user.$add("roles", role.id)
+    const updateUser = await this.userModel.findByPk(userId, {
+      include: {
+        model: Role,
+        attributes: ["value"],
+        through: { attributes: [] }
+      }
+    });
+
+    return updateUser;
+  }
+
+  async removeRole(addRemoveDto: AddRemoveDto) {
+    const { userId, value } = addRemoveDto;
+    const user = await this.userModel.findByPk(userId);
+    if (!user) {
+      throw new NotFoundException("Bunday foydalanuvchi mavjud emas")
+    }
+
+    const role = await this.roleService.findRoleByValue(value);
+    if (!role) {
+      throw new NotFoundException("Bunday role mavjud emas")
+    }
+
+    await user.$remove("roles", role.id)
+    const updateUser = await this.userModel.findByPk(userId, {
+      include: {
+        model: Role,
+        attributes: ["value"],
+        through: { attributes: [] }
+      }
+    });
+
+    return updateUser;
+  }
+
+
+  async activateUser(activateUserDto: ActivateUserDto) {
+    const { userId } = activateUserDto;
+    const user = await this.userModel.findByPk(userId);
+    if (!user) {
+      throw new NotFoundException("Bunday foydalanuvchi mavjud emas")
+    }
+
+    user.is_active = true;
+    await user.save();
+    return user;
   }
 }
+  

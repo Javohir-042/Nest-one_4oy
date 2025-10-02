@@ -1,19 +1,24 @@
-import { IsNotEmpty, IsPhoneNumber, IsString } from "class-validator";
+import { ApiProperty } from "@nestjs/swagger";
+import { IsNotEmpty, IsString, IsPhoneNumber } from "class-validator";
 
 export class CreateDriverDto {
-  @IsString()
+  @ApiProperty()
   @IsNotEmpty()
+  @IsString()
   first_name: string;
 
-  @IsString()
+  @ApiProperty()
   @IsNotEmpty()
+  @IsString()
   last_name: string;
 
-  @IsPhoneNumber()
+  @ApiProperty()
   @IsNotEmpty()
+  @IsPhoneNumber()
   phone: string;
 
-  @IsString()
+  @ApiProperty()
   @IsNotEmpty()
+  @IsString()
   driver_license: string;
 }

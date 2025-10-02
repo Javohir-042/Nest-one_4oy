@@ -2,7 +2,6 @@ import {
   BelongsToMany,
   Column,
   DataType,
-  HasMany,
   Model,
   Table,
 } from "sequelize-typescript";
@@ -14,6 +13,7 @@ interface IDriverCreationAttr {
   last_name: string;
   phone: string;
   driver_license: string;
+  image: string;
 }
 
 @Table({ tableName: "driver" })
@@ -49,8 +49,15 @@ export class Driver extends Model<Driver, IDriverCreationAttr> {
   })
   declare driver_license: string;
 
-  // @HasMany(() => MachineDriver)
-  // machineDriver: MachineDriver[];
+
+
+  @Column({
+    type: DataType.STRING,
+  })
+  image: string;
+
+
+
 
   @BelongsToMany(() => Machine, () => MachineDriver)
   machines: Machine[];

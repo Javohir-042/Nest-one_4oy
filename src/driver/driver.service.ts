@@ -7,15 +7,19 @@ import { CreateDriverDto } from "./dto/create-driver.dto";
 import { UpdateDriverDto } from "./dto/update-driver.dto";
 import { InjectModel } from "@nestjs/sequelize";
 import { Driver } from "./models/driver.models";
+import { FileService } from "../file/file.service";
 
 @Injectable()
 export class DriverService {
   constructor(
     @InjectModel(Driver) private readonly drverModel: typeof Driver,
-  ) {}
+    private readonly fileService: FileService
+  ) { }
 
-  async create(createDriverDto: CreateDriverDto): Promise<Driver> {
+  async create(createDriverDto: CreateDriverDto, image: any): Promise<Driver> {
     const { first_name, last_name, phone, driver_license } = createDriverDto;
+
+    const fileName = await this.fileService.saveFile(image)
 
     if (!first_name || !last_name || !phone || !driver_license) {
       throw new NotFoundException("Iltimos barchasini kiriting");
@@ -33,7 +37,7 @@ export class DriverService {
       throw new BadRequestException("Bunday Haydovchi litsenziya bor");
     }
 
-    return this.drverModel.create(createDriverDto);
+    return this.drverModel.create({ ...createDriverDto, image: fileName });
   }
 
   findAll(): Promise<Driver[]> {

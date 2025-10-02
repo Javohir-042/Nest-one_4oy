@@ -14,10 +14,16 @@ import { MachineDriver } from "./machine_driver/model/machine_driver.model";
 import { RoleModule } from "./role/role.module";
 import { UsersModule } from "./users/users.module";
 import { AuthModule } from './auth/auth.module';
+import { FileService } from './file/file.service';
+import { ServeStaticModule } from "@nestjs/serve-static";
+import { join } from "node:path";
 
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: ".env", isGlobal: true }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, "../static")
+    }),
     SequelizeModule.forRoot({
       dialect: "postgres",
       host: process.env.PG_HOST,
@@ -31,16 +37,17 @@ import { AuthModule } from './auth/auth.module';
       sync: { alter: true },
       synchronize: true,
     }),
+    AuthModule,
+    UsersModule,
     CompanyModule,
     DriverModule,
     BuilderModule,
     MachineModule,
     MachineDriverModule,
     RoleModule,
-    UsersModule,
-    AuthModule,
+    
   ],
   controllers: [],
-  providers: [],
+  providers: [FileService],
 })
 export class AppModule {}
